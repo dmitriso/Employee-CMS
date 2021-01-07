@@ -33,6 +33,7 @@ function init() {
         'Update Employee Role',
         'Exit'
       ]}]).then((data) => {
+    //THIS CALLS THE CORRESPONDING METHOD TO THE A SELECTED CHOICE
     switch (data.start) {
       case 'Add Employee':
         addEmployee();
@@ -62,8 +63,7 @@ function init() {
   })
 }
 
-
-
+// THIS DISPLAYS A TABLE OF ALL EMPLOYEES TO THE CONSOLE
 function viewEmployees() {
   console.log('Showing All Employees...\n');
   connection.query("SELECT * FROM employees", function (err, res) {
@@ -71,7 +71,7 @@ function viewEmployees() {
     console.table(res);
   });
 }
-
+// THIS DISPLAYS A TABLE OF ALL ROLES TO THE CONSOLE
 function viewRoles() {
   console.log('Showing All Roles...\n');
   connection.query("SELECT * FROM roles", function (err, res) {
@@ -79,7 +79,7 @@ function viewRoles() {
     console.table(res);
   });
 }
-
+// THIS DISPLAYS A TABLE OF ALL DEPARTMENTS TO THE CONSOLE
 function viewDepartments() {
   console.log('Showing All Departments...\n');
   connection.query("SELECT * FROM departments", function (err, res) {
