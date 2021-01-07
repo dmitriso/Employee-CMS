@@ -22,7 +22,7 @@ INSERT INTO roles (id, title, salary, department_id)
 VALUES (2, "Senior Developer", 80000, 4);
 
 INSERT INTO roles (id, title, salary, department_id)
-VALUES (3, "Financ", 100000, 1);
+VALUES (3, "Finance", 100000, 1);
 
 INSERT INTO roles (id, title, salary, department_id)
 VALUES (4, "Accountant", 60000, 1);

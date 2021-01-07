@@ -41,7 +41,7 @@ function init() {
         viewEmployees();
         break;
       case 'View Roles':
-      viewroles();
+       viewRoles();
         break;
       case 'View Department':
         viewDepartment();
@@ -61,6 +61,14 @@ function init() {
 function viewEmployees() {
   console.log('Showing All Employees...\n');
   connection.query("SELECT * FROM employees", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+  });
+}
+
+function viewRoles() {
+  console.log('Showing All Roles...\n');
+  connection.query("SELECT * FROM roles", function (err, res) {
     if (err) throw err;
     console.table(res);
   });
