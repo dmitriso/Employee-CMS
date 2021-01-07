@@ -19,14 +19,20 @@ connection.connect((err) => {
 
 //INQUIRER PROMPT TO GENERATE QUESTIONS IN THE CLI
 function init() {
-  inquirer.prompt([
-    {
+  inquirer.prompt([{
       type: 'list',
       name: 'start',
       message: 'What would you like to do?',
-      choices: ['View Employees', 'View Roles', 'View Department', 'Add Employee', 'Add Role', 'Add Department', 'Update Employee Role','Exit']
-    }
-  ]).then((data) => {
+      choices: [
+        'View Employees',
+        'View Roles',
+        'View Departments',
+        'Add Employee',
+        'Add Role',
+        'Add Department',
+        'Update Employee Role',
+        'Exit'
+      ]}]).then((data) => {
     switch (data.start) {
       case 'Add Employee':
         addEmployee();
@@ -41,10 +47,10 @@ function init() {
         viewEmployees();
         break;
       case 'View Roles':
-       viewRoles();
+        viewRoles();
         break;
-      case 'View Department':
-        viewDepartment();
+      case 'View Departments':
+        viewDepartments();
         break;
       case 'Update Employee Role':
         updateEmployeeRole();
@@ -69,6 +75,14 @@ function viewEmployees() {
 function viewRoles() {
   console.log('Showing All Roles...\n');
   connection.query("SELECT * FROM roles", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+  });
+}
+
+function viewDepartments() {
+  console.log('Showing All Departments...\n');
+  connection.query("SELECT * FROM departments", function (err, res) {
     if (err) throw err;
     console.table(res);
   });
