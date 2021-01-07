@@ -7,16 +7,16 @@ const connection = mysql.createConnection({
   port: 3306,
   user: 'root',
   password: 'Dmso0929',
-  database: 'playlist_db',
+  database: 'employeecms_db',
 });
 //CONFIRMS IF CONNECTION WAS SUCCESSFUL OR NOT
 connection.connect((err) => {
   if (err) throw err;
   console.log('connected as id ' + connection.threadId);
-  connection.end();
+  init();
 });
 
-init();
+
 //INQUIRER PROMPT TO GENERATE QUESTIONS IN THE CLI
 function init() {
   inquirer.prompt([
@@ -56,3 +56,11 @@ function init() {
   })
 }
 
+
+function viewEmployees() {
+  console.log('Showing All Employees...\n');
+  connection.query("SELECT * FROM employee", function (err, res) {
+    if (err) throw err;
+    console.table(res);
+  });
+}
