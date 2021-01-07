@@ -10,6 +10,10 @@ const connection = mysql.createConnection({
   password: 'Dmso0929',
   database: 'playlist_db',
 });
-
-
+//CONFIRMS IF CONNECTION WAS SUCCESSFUL OR NOT
+connection.connect((err) => {
+  if (err) throw err;
+  console.log('connected as id ' + connection.threadId);
+  connection.end();
+});
 
