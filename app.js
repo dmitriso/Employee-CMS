@@ -4,11 +4,11 @@ const roleChoices = [];
 
 //CONNECTING TO THE DATABASE
 const connection = mysql.createConnection({
-  host:'localhost',
-  port:3306,
-  user:'root',
-  password:'Dmso0929',
-  database:'employeecms_db',
+  host: 'localhost',
+  port: 3306,
+  user: 'root',
+  password: 'Dmso0929',
+  database: 'employeecms_db',
 });
 //CONFIRMS IF CONNECTION WAS SUCCESSFUL OR NOT
 connection.connect((err) => {
@@ -20,8 +20,8 @@ connection.connect((err) => {
 //INQUIRER PROMPT TO GENERATE QUESTIONS IN THE CLI
 function init() {
   inquirer.prompt([{
-    type:'list',
-    name:'start',
+    type: 'list',
+    name: 'start',
     message: 'What would you like to do?',
     choices: [
       'View Employees',
@@ -46,7 +46,7 @@ function init() {
         addDepartment();
         break;
       case 'View Employees':
-        viewEmployees();
+        viewAllEmployees();
         break;
       case 'View Roles':
         viewRoles();
@@ -64,10 +64,13 @@ function init() {
   })
 }
 
-// THIS DISPLAYS A TABLE OF ALL EMPLOYEES TO THE CONSOLE
-function viewEmployees() {
+//THIS DISPLAYS A TABLE OF ALL THE EMPLOYEES FIRST AND LAST NAMES, ROLES, DEPARTMENTS, SALARIES
+function viewAllEmployees() {
   console.log('Showing All Employees...\n');
-  connection.query("SELECT * FROM employees", function (err, res) {
+  var query = "SELECT employees.first_name, employees.last_name, roles.title, departments.name, roles.salary ";
+  query += "FROM departments INNER JOIN roles ON roles.department_id = departments.id ";
+  query += "INNER JOIN employees ON employees.role_id = roles.id;"
+  connection.query(query, function (err, res) {
     if (err) throw err;
     console.table(res);
     init();
@@ -76,20 +79,23 @@ function viewEmployees() {
 // THIS DISPLAYS A TABLE OF ALL ROLES TO THE CONSOLE
 function viewRoles() {
   console.log('Showing All Roles...\n');
-  connection.query("SELECT * FROM roles", function (err, res) {
+  connection.query("SELECT roles.title,roles.salary FROM roles", function (err, res) {
     if (err) throw err;
     console.table(res);
-
+    init();
   });
 }
 // THIS DISPLAYS A TABLE OF ALL DEPARTMENTS TO THE CONSOLE
 function viewDepartments() {
   console.log('Showing All Departments...\n');
-  connection.query("SELECT * FROM departments", function (err, res) {
+  connection.query("SELECT departments.name FROM departments", function (err, res) {
     if (err) throw err;
     console.table(res);
+    init();
   });
 }
+
+
 
 
 // THIS PROMPTS THE USER FOR INFORMATION TO ADD A NEW ROLE TO THE TABLE
@@ -99,23 +105,23 @@ function addRole() {
     if (err) throw err;
     inquirer.prompt([
       {
-        type:'input',
-        name:'role_title',
-        message:'What is the name of this new role?'
+        type: 'input',
+        name: 'role_title',
+        message: 'What is the name of this new role?'
       },
       {
-        type:'input',
-        name:'role_salary',
-        message:'What is the average salary of this new role?'
+        type: 'input',
+        name: 'role_salary',
+        message: 'What is the average salary of this new role?'
       },
       {
-        type:'rawlist',
-        name:'role_department',
-        choices:function(value) {
+        type: 'rawlist',
+        name: 'role_department',
+        choices: function (value) {
           let choiceArr = [];
           console.log(res);
           for (var i = 0; i < res.length; i++) {
-            choiceArr.push({name:res[i].name,value:res[i].id});
+            choiceArr.push({ name: res[i].name, value: res[i].id });
           }
           return choiceArr;
         },
@@ -123,17 +129,18 @@ function addRole() {
       }
     ]).then((res) => {
       connection.query("INSERT INTO roles SET ?", {
-          title: res.role_title,
-          salary: res.role_salary,
-          department_id: res.role_department
+        title: res.role_title,
+        salary: res.role_salary,
+        department_id: res.role_department
       }, (err, res) => {
-          if (err) throw err;
-          console.log("New Role Added To Database!");
-          init();
-        });
+        if (err) throw err;
+        console.log("New Role Added To Database!");
+        init();
+      });
     });
   })
 }
 
+ 
 
 
