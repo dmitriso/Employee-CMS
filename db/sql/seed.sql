@@ -2,6 +2,7 @@ SELECT * FROM departments;
 SELECT * FROM roles;
 SELECT * FROM employees;
 
+-- SEED SQL STATEMENTS
 INSERT INTO departments (id, name)
 VALUES (1, "Accounting");
 
@@ -28,13 +29,13 @@ INSERT INTO roles (id, title, salary, department_id)
 VALUES (4, "Accountant", 60000, 1);
 
 INSERT INTO roles (id, title, salary, department_id)
-VALUES (7, "Lawyer", 80000, 2);
+VALUES (5, "Lawyer", 80000, 2);
 
 INSERT INTO roles (id, title, salary, department_id)
-VALUES (8, "Marketing Lead", 85000, 3);
+VALUES (6, "Marketing Lead", 85000, 3);
 
 INSERT INTO roles (id, title, salary, department_id)
-VALUES (9, "Marketing Associate", 65000, 3);
+VALUES (7, "Marketing Associate", 65000, 3);
 
 
 INSERT INTO employees (id, first_name, last_name, role_id, manager_id)

@@ -1,5 +1,6 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
+const cTable = require('console.table');
 const _ = require('lodash');
 
 //CONNECTING TO THE DATABASE
@@ -76,6 +77,7 @@ function viewEmployees() {
     init();
   });
 }
+
 // THIS DISPLAYS A TABLE OF ALL ROLES TO THE CONSOLE
 function viewRoles() {
   console.log('Showing All Roles...\n');
@@ -85,6 +87,7 @@ function viewRoles() {
     init();
   });
 }
+
 // THIS DISPLAYS A TABLE OF ALL DEPARTMENTS TO THE CONSOLE
 function viewDepartments() {
   console.log('Showing All Departments...\n');
@@ -94,7 +97,6 @@ function viewDepartments() {
     init();
   });
 }
-
 
 // THIS PROMPTS THE USER FOR INFORMATION TO ADD A NEW ROLE TO THE TABLE
 function addRole() {
@@ -204,13 +206,14 @@ function addEmployee() {
             role_id: response.employee_role,
             manager_id: respond.manager_id
           },
-          function(err,res) {
-            if(err) throw err;
-            console.log("New Employees Has Been Added to the Database!")
-            init();
-          })
+            function (err, res) {
+              if (err) throw err;
+              console.log("New Employees Has Been Added to the Database!")
+              init();
+            })
         })
+      })
     })
-  }) 
-})
+  })
 }
+

@@ -1,3 +1,4 @@
+-- SCHEMA SQL STATEMENTS
 DROP DATABASE IF EXISTS employeecms_db;
 
 CREATE DATABASE employeecms_db;
