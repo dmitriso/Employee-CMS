@@ -217,3 +217,41 @@ function addEmployee() {
   })
 }
 
+// THIS PROMPTS THE USER TO SELECT AN EMPLOYEE TO CHANGE THEIR ROLE
+function updateEmployeeRole() {
+  connection.query("SELECT employees.first_name, employees.last_name, employees.id FROM employees", function (err, res) {
+    console.table(res);
+    const employee = _.map(res, _.iteratee('id'));
+    inquirer.prompt([{
+      type: 'rawlist',
+      name: 'selected_employee',
+      choices: employee,
+      message: "Which employee"
+    }]).then((response) => {
+      console.log(response);
+      connection.query("SELECT * FROM roles", (err, res) => {
+        console.table(res);
+        const roles = _.map(res, _.iteratee('id'));
+        inquirer.prompt([{
+          type: 'rawlist',
+          name: 'role_id',
+          choices: roles,
+          message: "What is the new role you would like to give this employee?"
+        }]).then((res) => {
+          connection.query("UPDATE employees SET ? WHERE ?",
+            [{
+              role_id: res.role_id
+            },
+            {
+              id: response.selected_employee
+            }],
+            function (err, res) {
+              if (err) throw err;
+              console.log("This employees role has been changed!");
+              init();
+            })
+        })
+      })
+    })
+  })
+}
