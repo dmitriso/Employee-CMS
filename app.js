@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const inquirer = require('inquirer');
-const roleChoices = [];
+const _ = require('lodash');
 
 //CONNECTING TO THE DATABASE
 const connection = mysql.createConnection({
@@ -46,7 +46,7 @@ function init() {
         addDepartment();
         break;
       case 'View Employees':
-        viewAllEmployees();
+        viewEmployees();
         break;
       case 'View Roles':
         viewRoles();
@@ -65,12 +65,12 @@ function init() {
 }
 
 //THIS DISPLAYS A TABLE OF ALL THE EMPLOYEES FIRST AND LAST NAMES, ROLES, DEPARTMENTS, SALARIES
-function viewAllEmployees() {
+function viewEmployees() {
   console.log('Showing All Employees...\n');
   var query = "SELECT employees.first_name, employees.last_name, roles.title, departments.name, roles.salary ";
   query += "FROM departments INNER JOIN roles ON roles.department_id = departments.id ";
   query += "INNER JOIN employees ON employees.role_id = roles.id;"
-  connection.query(query, function (err, res) {
+  connection.query(query, (err, res) => {
     if (err) throw err;
     console.table(res);
     init();
@@ -79,7 +79,7 @@ function viewAllEmployees() {
 // THIS DISPLAYS A TABLE OF ALL ROLES TO THE CONSOLE
 function viewRoles() {
   console.log('Showing All Roles...\n');
-  connection.query("SELECT roles.title,roles.salary FROM roles", function (err, res) {
+  connection.query("SELECT roles.title,roles.salary FROM roles", (err, res) => {
     if (err) throw err;
     console.table(res);
     init();
@@ -88,14 +88,12 @@ function viewRoles() {
 // THIS DISPLAYS A TABLE OF ALL DEPARTMENTS TO THE CONSOLE
 function viewDepartments() {
   console.log('Showing All Departments...\n');
-  connection.query("SELECT departments.name FROM departments", function (err, res) {
+  connection.query("SELECT departments.name FROM departments", (err, res) => {
     if (err) throw err;
     console.table(res);
     init();
   });
 }
-
-
 
 
 // THIS PROMPTS THE USER FOR INFORMATION TO ADD A NEW ROLE TO THE TABLE
@@ -128,19 +126,91 @@ function addRole() {
         message: 'What department does this role belong too?'
       }
     ]).then((res) => {
-      connection.query("INSERT INTO roles SET ?", {
-        title: res.role_title,
-        salary: res.role_salary,
-        department_id: res.role_department
-      }, (err, res) => {
-        if (err) throw err;
-        console.log("New Role Added To Database!");
-        init();
-      });
+      connection.query("INSERT INTO roles SET ?",
+        {
+          title: res.role_title,
+          salary: res.role_salary,
+          department_id: res.role_department
+        },
+        (err, res) => {
+          if (err) throw err;
+          console.log("New Role Added To Database!");
+          init();
+        });
     });
   })
 }
 
- 
+// THIS PROMPTS THE USER FOR THE NAME OF THE NEW DEPARTMENT TO BE ADDED TO THE DATABASE
+function addDepartment() {
+  console.log("You chose to add a new department!");
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'new_department',
+      message: 'What is the name of the department you would like to create?'
+    }
+  ]).then((res) => {
+    connection.query("INSERT INTO departments SET ?",
+      {
+        name: res.new_department
+      },
+      (err, res) => {
+        if (err) throw err;
+        console.log("New Department Added To Database!");
+        init();
+      });
+  });
+}
 
-
+// THIS PROMPTS USER FOR INFORMATION TO CREATE A NEW EMPLOYEE AND ADD TO THE DATABASE
+function addEmployee() {
+  console.log("You Chose To Add A New Employee")
+  connection.query("SELECT * FROM roles ORDER BY id", async function (err, res) {
+    console.table(res);
+    const roles = _.map(res, _.iteratee('id'));
+    inquirer.prompt([
+      {
+        type: 'input',
+        name: 'first_name',
+        message: "What is the employee's first name?",
+      },
+      {
+        type: 'input',
+        name: 'last_name',
+        message: "What is the employee's last name?",
+      },
+      {
+        type: 'rawlist',
+        name: 'employee_role',
+        choices: roles,
+        message: 'What role would you like to give this employee?'
+      }
+    ]).then((response) => {
+      connection.query("SELECT employees.first_name, employees.last_name, employees.id FROM employees ORDER BY id", function (err, resp) {
+        console.table(resp);
+        const managers = _.map(res, _.iteratee('id'));
+        inquirer.prompt([
+          {
+            type: 'rawlist',
+            name: 'manger_id',
+            choices: managers,
+            message: "Who manages this employee?"
+          }
+        ]).then((respond) => {
+          connection.query("INSERT INTO employees SET ?", {
+            first_name: response.first_name,
+            last_name: response.last_name,
+            role_id: response.employee_role,
+            manager_id: respond.manager_id
+          },
+          function(err,res) {
+            if(err) throw err;
+            console.log("New Employees Has Been Added to the Database!")
+            init();
+          })
+        })
+    })
+  }) 
+})
+}
